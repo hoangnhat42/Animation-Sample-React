@@ -54,11 +54,11 @@ export const Random1 = () => (
         <br />
         &nbsp;&nbsp;effect="jump"
         <br />
-        &nbsp;&nbsp;effectChange=&#123;2.0}
+        &nbsp;&nbsp;effectChange=&#123;2.0&rbrace;
         <br />
-        &nbsp;&nbsp;effectDuration=&#123;0.3}
+        &nbsp;&nbsp;effectDuration=&#123;0.3&rbrace;
         <br />
-        />
+        /&gt;
       </pre>
     </div>
   </div>
@@ -104,19 +104,19 @@ export class Random2 extends React.Component {
           <pre style={codeStyle}>
             &lt;Random
             <br />
-            &nbsp;&nbsp;text=&#123;this.state.randomNumber}
+            &nbsp;&nbsp;text=&#123;this.state.randomNumber&rbrace;
             <br />
-            &nbsp;&nbsp;paused=&#123;this.state.paused}
+            &nbsp;&nbsp;paused=&#123;this.state.paused&rbrace;
             <br />
             &nbsp;&nbsp;iterations={1}
             <br />
             &nbsp;&nbsp;effect="verticalFadeIn"
             <br />
-            &nbsp;&nbsp;effectChange=&#123;2}
+            &nbsp;&nbsp;effectChange=&#123;2&rbrace;
             <br />
             &nbsp;&nbsp;effectDirection="up"
             <br />
-            />
+            /&gt;
           </pre>
         </div>
       </div>

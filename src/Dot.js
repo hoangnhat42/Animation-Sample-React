@@ -1,108 +1,99 @@
-import "./styles.css";
-import { useEffect, useRef } from "react";
+import React, { useRef, useEffect, useState } from 'react';
 
-const getPixelRatio = (context) => {
-  const backingStore =
-    context.backingStorePixelRatio ||
-    context.webkitBackingStorePixelRatio ||
-    context.mozBackingStorePixelRatio ||
-    context.msBackingStorePixelRatio ||
-    context.oBackingStorePixelRatio ||
-    context.backingStorePixelRatio ||
-    1;
+export default function ParticleCanvas() {
+  // Khởi tạo một tham chiếu để lưu trữ canvas
+  const canvasRef = useRef(null);
 
-  return (window.devicePixelRatio || 1) / backingStore;
-};
+  // Khởi tạo trạng thái di chuột có đang nằm trên canvas hay không
+  const [isMouseOver, setIsMouseOver] = useState(false);
 
-const Dot = () => {
-  const canvasRef = useRef();
-
+  // Hàm này sẽ được gọi khi component được mount và khi có thay đổi trong props hoặc state
   useEffect(() => {
-    // select the canvas element
+    // Lấy ra canvas và context
     const canvas = canvasRef.current;
-    // create a 2D contest
-    const ctx = canvas.getContext("2d");
+    const context = canvas.getContext('2d');
 
-    let ratio = getPixelRatio(ctx);
-    let width = getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
-    let height = getComputedStyle(canvas)
-      .getPropertyValue("height")
-      .slice(0, -2);
+    // Tạo ra những điểm ngẫu nhiên trên canvas
+    const points = [];
+    for (let i = 0; i < 15; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      points.push({ x, y, vx: 0, vy: 0 });
+    }
 
-    canvas.width = width * ratio;
-    canvas.height = height * ratio;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
+    // Vẽ điểm lên canvas
+    function drawPoints() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      points.forEach(point => {
+        context.beginPath();
+        context.arc(point.x, point.y, 10, 0, 2 * Math.PI);
+        context.fillStyle = 'rgba(255, 0, 0, 0.5)';
+        context.fill();
+      });
+    }
 
-    // const render = () => {
-    //   ctx.beginPath();
-    //   ctx.arc(
-    //     canvas.width / 10,
-    //     canvas.height / 2,
-    //     canvas.width / 15,
-    //     0,
-    //     2 * Math.PI
-    //   );
-    //   ctx.fillStyle = "black";
-    //   ctx.fill();
-    // };
-    //requestAnimationFrame(render);
+    // Gọi hàm vẽ điểm lên canvas
+    drawPoints();
 
-    //render 50 dots
-    for (let i = 0; i < 50; i++) {
-        ctx.beginPath();
-        ctx.arc(
-            Math.random() * canvas.width,
-            Math.random() * canvas.height,
-            Math.random() * 10,
-            0,
-            2 * Math.PI
-        );
-        ctx.fillStyle = "black";
-        ctx.fill();
+    // Thiết lập hiệu ứng khi di chuột vào điểm
+    function updatePoints(x, y) {
+      points.forEach((point, index) => {
+        const dx = x - point.x;
+        const dy = y - point.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < 100) {
+          const angle = Math.atan2(dy, dx);
+          const force = (100 - distance) / 100;
+          point.vx += Math.cos(angle) * force;
+          point.vy += Math.sin(angle) * force;
         }
+        point.x += point.vx;
+        point.y += point.vy;
+        point.vx *= 0.9;
+        point.vy *= 0.9;  
+      });
+    }
 
-    // onHover effect for dots move 5px in any direction on mouse hover
-        canvas.addEventListener("mousemove", (e) => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < 50; i++) {
-                ctx.beginPath();
-                ctx.arc(
-                    Math.random() * canvas.width,
-                    Math.random() * canvas.height,
-                    Math.random() * 10,
-                    0,
-                    2 * Math.PI
-                );
-                ctx.fillStyle = "black";
-                ctx.fill();
-            }
-            ctx.beginPath();
-            ctx.arc(
-                e.offsetX,
-                e.offsetY,
-                10,
-                0,
-                2 * Math.PI
-            );
-            ctx.fillStyle = "black";
-            ctx.fill();
-        });
-    }, []);
+    // Hàm này sẽ được gọi khi di chuột vào canvas
+    function onMouseMove(event) {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      updatePoints(x, y);
+      drawPoints();
+    }
 
-    
-  return <canvas ref={canvasRef} width={400} height={500}> </canvas>;
-};
+    // Hàm này sẽ được gọi khi di chuột ra khỏi canvas
+    function onMouseLeave() {
+      setIsMouseOver(false);
+    }
 
-export default Dot;
+    // Hàm này sẽ được gọi khi di chuột vào canvas
 
-// useEffect(() => {
-//   window.addEventListener("resize", () => {
-//     canvasRef.current.style.width = window.innerWidth;
-//     canvasRef.current.style.height = window.innerHeight;
-//   });
-// });
+    function onMouseEnter() {
+      setIsMouseOver(true);
+    }
 
-// console.log("H", height);
-//     console.log("W", width);
-//     console.log("R", ratio);
+    // Thêm sự kiện di chuột vào canvas
+    canvas.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('mouseleave', onMouseLeave);
+    canvas.addEventListener('mouseenter', onMouseEnter);
+
+    // Hàm này sẽ được gọi khi component được unmount
+    return () => {
+      canvas.removeEventListener('mousemove', onMouseMove);
+      canvas.removeEventListener('mouseleave', onMouseLeave);
+      canvas.removeEventListener('mouseenter', onMouseEnter);
+    }
+  }, [isMouseOver]);
+
+  return (
+    <canvas
+
+      ref={canvasRef}
+      width={window.innerWidth}
+      height={window.innerHeight}
+    />
+  );
+}
+

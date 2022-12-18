@@ -4,13 +4,17 @@ import ReactDOM from "react-dom";
 import "./styles.css";
 
 import Item from "./Item";
-import Dot from "./Dot";
+import ParticleCanvas from "./Dot";
+import AppTest from './AppTest';
+import CanvasDots from './NewDot';
+
 function App() {
   return (
     <div className="App">
       {/* Effect add item fly to cart */}
       {/* <Item /> */}
-      <Dot />
+      <ParticleCanvas />
+      <AppTest />
     </div>
   );
 }

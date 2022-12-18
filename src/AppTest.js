@@ -1,10 +1,7 @@
 import React from "react";
 import "./styles.css";
 import ParticleImage, { forces, Vector } from "react-particle-image";
-import Indexx from "./indexx";
-import Love from "./lovein";
-const src =
-  "https://e7.pngegg.com/pngimages/339/460/png-clipart-white-dog-dog-puppy-cartoon-dogs-white-cat-like-mammal.png";
+const src = "https://i.imgur.com/lMAkojn.png";
 
 export default function App() {
   return (
@@ -33,11 +30,8 @@ export default function App() {
           }
         }}
       />
-      <div>
-        <Love />
-      </div>
+      
       <div style={{ backgroundColor: "#000" }}>
-        <Indexx />
       </div>
     </div>
   );
